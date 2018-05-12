@@ -1,8 +1,9 @@
 // Pull Keys from Keys.js
 var apikeys = require('./keys.js');
-var requiest = require('request');
+var request = require('request');
 var twitter = require('twitter');
-var spotify = require('spotify');
+var spotify = require('node-spotify-api');
+var inquirer = require('inquirer');
 var client = new twitter(keys.twitter.Keys);
 var fs = require('fs');
 
@@ -91,7 +92,7 @@ function restartProgram() {
 
 function getTweets() {
     var client = new twitter(apikeys.twitterKeys);
-    var queryURL = ""
+    var queryURL = "https://api.twitter.com/1.1/search/tweets.json?q=dougiesmokes&result_type=recent&count=20";
 
     client.get(queryURL, (error, tweets, response) => {
 
@@ -102,7 +103,7 @@ function getTweets() {
 
         console.log("\n@dougiesmokes latest tweets: \n");
 
-        for var( i = 0; i < tweets.statuses.length; i++) {
+        for (var i = 0; i < tweets.statuses.length; i++) {
             console.log(tweets.statuses[i].created_at.substring(0,19) + " - " + tweets.statuses[i].text)
         }
         console.log('');
@@ -114,7 +115,7 @@ function getTweets() {
 function getMusic(song) {
     var Spotify = new spotify(apikeys.spotifyKeys);
 
-    Spotify.search({ type: 'track, 'query: song, limit: 1 }, (err, data) => {
+    Spotify.search({ type: 'track', query: song, limit: 1 }, (err, data) => {
         if (err) {
             logErrors('getMusic()', song);
             return console.log(`\n${err}\n`);
@@ -133,15 +134,21 @@ function getMusic(song) {
     });
 }
 
-function getMovie(movie) [
-    var apikey = "";
-    var movieQueryUrl = ``;
+function getMovie(movie) {
+    var apikey = "trilogy";
+    var movieQueryUrl = `http://www.omdbapi.com/?t=${movie}&apikey=${apiKey}`;
+    var movie = process.argv[3];
 
+         if(!movie) {
+        movie = "mr nobody";
+        }
     request(movieQueryURL, (error, response, body) => {
+
         if (JSON.parse(body).Response === 'False') {
             console.log("\nMovie title does not exist.\n");
             logErrors('getMovie()', movie);
             restartProgram();
+
         } else if (!error && response.statusCode === 200) {
             var title = JSON.parse(body).Title;
             var movieYear = JSON.parse(body).Year;
@@ -151,7 +158,7 @@ function getMovie(movie) [
             var IMDB_Rating;
             var rotten_Rating;
 
-            if (JSON.parse(body).Ratings[0] {
+            if (JSON.parse(body).Ratings[0]) {
                 IMDB_Rating = JSON.parse(body).Ratings[0].Value;
             } else {
                 IMDB_Rating = 'undefined';
@@ -164,11 +171,12 @@ function getMovie(movie) [
             }
 
             console.log("\nCool!\n");
-            console.log(`Showing '${title}', Starring ${actors}. Released ${country} in ${movieYear}. IMDB: ${IMDB_Rating} RT: ${rotten_Rating}`);
+            console.log(`Showing '${title}', Starring ${actors}. Released ${country} in ${movieYear}. IMDB: ${IMDB_Rating} RT: ${rotten_Rating}\n`);
             console.log(`Plot: '${plot}\n`);
 
             logResults('movie-this ', movie);
             setTimeout(restartProgram, 1000);
+
             } else {
             logErrors('getMovie()', movie);
             return console.log(error);

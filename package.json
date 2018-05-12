@@ -16,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/tangleton/liri-node-app/issues"
   },
-  "homepage": "https://github.com/tangleton/liri-node-app#readme"
+  "homepage": "https://github.com/tangleton/liri-node-app#readme",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "inquirer": "^5.2.0",
+    "node-spotify-api": "^1.0.7",
+    "request": "^2.85.0",
+    "twitter": "^1.7.1"
+  }
 }
