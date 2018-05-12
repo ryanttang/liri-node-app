@@ -104,7 +104,7 @@ function getTweets() {
 
         for (var i = 0; i < tweets.length; i++) {
             var date = tweets[i].created_at;
-            console.log(tweets[i].text + date.substring(0,19) + " - " + tweets[i].text)
+            console.log(date.substring(0,19) + " - " + tweets[i].text)
         }
         console.log('');
         });
