@@ -4,8 +4,8 @@ var request = require('request');
 var twitter = require('twitter');
 var spotify = require('node-spotify-api');
 var inquirer = require('inquirer');
-var client = new twitter(keys.twitter.Keys);
 var fs = require('fs');
+var dotenv = require("dotenv").config();
 
 // Start Program
 startProgram();
@@ -91,29 +91,29 @@ function restartProgram() {
 }
 
 function getTweets() {
-    var client = new twitter(apikeys.twitterKeys);
-    var queryURL = "https://api.twitter.com/1.1/search/tweets.json?q=dougiesmokes&result_type=recent&count=20";
-
-    client.get(queryURL, (error, tweets, response) => {
+    var client = new twitter(apikeys.twitter);
+    var screenName = {screen_name: 'dougiesmokesays'};
+    client.get('statuses/user_timeline', screenName, function(error, tweets, response) {
 
         if (error) {
-            logErrors('getTweets()', '@dougiesmokes');
+            logErrors('getTweets()', '@dougiesmokesays');
             console.log(error);
         }
 
-        console.log("\n@dougiesmokes latest tweets: \n");
+        console.log("\n@dougiesmokesays latest tweets: \n");
 
-        for (var i = 0; i < tweets.statuses.length; i++) {
-            console.log(tweets.statuses[i].created_at.substring(0,19) + " - " + tweets.statuses[i].text)
+        for (var i = 0; i < tweets.length; i++) {
+            var date = tweets[i].created_at;
+            console.log(tweets[i].text + date.substring(0,19) + " - " + tweets[i].text)
         }
         console.log('');
         });
-        logResults('my-tweets ', '@dougiesmokes');
+        logResults('my-tweets ', '@dougiesmokesays');
         setTimeout(restartProgram, 1000);
     }
 
 function getMusic(song) {
-    var Spotify = new spotify(apikeys.spotifyKeys);
+    var Spotify = new spotify(apikeys.spotify);
 
     Spotify.search({ type: 'track', query: song, limit: 1 }, (err, data) => {
         if (err) {
@@ -135,14 +135,14 @@ function getMusic(song) {
 }
 
 function getMovie(movie) {
-    var apikey = "trilogy";
+    var apiKey = "trilogy";
     var movieQueryUrl = `http://www.omdbapi.com/?t=${movie}&apikey=${apiKey}`;
     var movie = process.argv[3];
 
          if(!movie) {
         movie = "mr nobody";
         }
-    request(movieQueryURL, (error, response, body) => {
+    request(movieQueryUrl, (error, response, body) => {
 
         if (JSON.parse(body).Response === 'False') {
             console.log("\nMovie title does not exist.\n");
